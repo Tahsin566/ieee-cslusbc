@@ -8,7 +8,7 @@
     "test:load": "node backend/test/load.test.js",
     "test": "jest --watchAll",
     "start": "nodemon backend/src/server.js",
-    "build": "if exist files (rmdir /s /q files) && if not exist files mkdir files  && npm install && npm install --prefix frontend && npm run build --prefix frontend"
+    "build": "if exist files rmdir /s /q files && if not exist files mkdir files  && npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "",
