@@ -1,0 +1,92 @@
+
+import express from 'express'
+import cors from 'cors'
+import AuthRouter from '../routes/user.route.js'
+import BlogRouter from '../routes/blog.route.js'
+import ResearchRouter from '../routes/research.route.js'
+import { mongoconnect } from '../config/mongodb.js'
+import cookieParser from 'cookie-parser'
+import path from 'path'
+import fs from 'fs'
+import { Errorhandler } from '../middlewares/error.middleware.js'
+import slugify from 'slugify'
+import EventRouter from '../routes/event.route.js'
+import MagazineRouter from '../routes/magazine.route.js'
+import NewsRouter from '../routes/news.route.js'
+import ContactRouter from '../routes/contact.route.js'
+import CommitteeRouter from '../routes/committee.route.js'
+import IeeeRouter from '../routes/ieee.about.route.js'
+import ExperienceAchievementRouter from '../routes/achievement.experience.route.js'
+import BannerRouter from '../routes/banner.route.js'
+import FaqRouter from '../routes/faq.route.js'
+import GalleryRouter from '../routes/gallery.route.js'
+import { adminRoute } from '../middlewares/admin.middleware.js'
+import { protectedRoute } from '../middlewares/auth.middleware.js'
+
+import dotenv from 'dotenv'
+dotenv.config()
+
+const app = express()
+
+const __dirname = path.resolve()
+
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+
+app.use(express.static(path.join(__dirname,'/frontend/dist')))
+
+
+
+
+app.use(cookieParser())
+
+
+app.use('/api/auth',AuthRouter)
+app.use('/api/blog',BlogRouter)
+app.use('/api/research',ResearchRouter)
+app.use('/api/event',EventRouter)
+app.use('/api/magazine',MagazineRouter)
+app.use('/api/news',NewsRouter)
+app.use('/api/contact',ContactRouter)
+app.use('/api/committee',CommitteeRouter)
+app.use('/api/ieee',IeeeRouter)
+app.use('/api/experience-achievement',ExperienceAchievementRouter)
+app.use('/api/faq',FaqRouter)
+app.use('/api/gallery',GalleryRouter)
+app.use('/api/banner',BannerRouter)
+
+
+app.get('/{*splat}',(req,res)=>{
+    
+    res.sendFile(path.resolve(__dirname,'frontend','dist','index.html'))
+})
+
+app.get('/home',async(req,res)=>{
+    
+    res.status(200).json({success:true,text:'Home'})
+
+})
+
+
+app.get('/clear',protectedRoute,adminRoute,(req,res)=>{
+
+    fs.readdir('files',(err,files)=>{
+        if(err) throw err
+        for(const file of files){
+            fs.unlink(path.join('files',file),(err)=>{
+                if(err) throw err
+            })
+        }
+    })
+    res.status(200).json({message:'cleared'})
+})
+
+
+
+app.use(Errorhandler)
+
+
+app.listen(4000,async()=>{
+    console.log("Listening on port 4000")
+    await mongoconnect()
+})
