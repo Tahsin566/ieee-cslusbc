@@ -8,7 +8,7 @@
     "test:load": "node backend/test/load.test.js",
     "test": "jest --watchAll",
     "start": "nodemon backend/src/server.js",
-    "build": "mkdir files && rmdir /s /q files && mkdir files  && npm install && npm install --prefix frontend && npm run build --prefix frontend"
+    "build": "rmdir /s /q files && mkdir files  && npm install && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "",
